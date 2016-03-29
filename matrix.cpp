@@ -1,160 +1,127 @@
 #include <iostream>
 using namespace std;
 
-class AbstractMatrix
+class Matrix
 {
 protected:
     int n;
     int m;
     float* data;
-public:
-//	AbstractMatrix();
-//	AbstractMatrix(int m, int n);
-    virtual AbstractMatrix& operator+(AbstractMatrix&)=0;
-    virtual AbstractMatrix& operator*(AbstractMatrix&)=0;
-    virtual AbstractMatrix& operator*(float&)=0;
-    virtual AbstractMatrix& operator-(AbstractMatrix&)=0;
-    virtual AbstractMatrix& reverse()=0;
-    virtual AbstractMatrix& transpose()=0;
-    virtual float determinant()=0;
-    virtual ostream& print(ostream& o)=0;
-    virtual istream& read(istream& o)=0;
-    virtual void set(int i, int j, float data)=0;
-    virtual float get(int i, int j)=0;
-    virtual int getN()=0;
-    virtual int getM()=0;
-    virtual bool failed()=0;
-};
-
-class MyMatrix : public AbstractMatrix
-{
-    int getRightPos(int i, int j, int n)
+private:
+    bool okRow(float* data, int n, int index)
     {
-        return (n*i+j);
-    }
-    int getVertical(int pos, int n)
-    {
-        return (pos%n);
-    }
-    int getHorizontal(int pos, int n)
-    {
-        return (pos/n);
-    }
-    float* createNumbers(int m, int n)
-    {
-        if(m<=0 || n<=0)
-            return NULL;
-        float* _data = new float [m*n];
-        for(int i=0; i<m*n; i++)
-            _data[i] = 0;
-        return _data;
-    }
-    void determinant(float det, int n, float data[], float* deter)
-    {
-        if (n == 0)
+        if(data[index*n+index] != 0)
+            return true;
+        else
         {
-            *deter += det;
-            return;
-        }
-        for (int k = 0; k < n; k++)
-        {
-            if ((n + k + 1) % 2 == 1)
-                det = -(det);
-            float* dataNew = new float[(n - 1)*(n - 1) + 1];
-            int j = 0;
-            for (int i = 0; i < (n*(n-1)); i++)
-                if (i%n != k)
-                {
-                    dataNew[j] = data[i];
-                    j++;
-                }
-            float det1 = det*data[n*(n - 1) + k];
-            determinant(det1, n - 1, dataNew, deter);
-            delete dataNew;
-            if ((n + k + 1) % 2 == 1)
-                det = -(det);
-        }
-        return;
-    }
-    float minors(int I, int J, float Determinant) //if n = m
-    {
-        int count = 0;
-        float* dataNew = new float [(n-1)*(n-1) + 1];
-        for(int i=0; i<n*n; i++)
-        {
-            if(i%n == J || i/n == I)
-            {}
-            else
+            for(int i=index+1; i<n; i++)
             {
-                dataNew[count] = this->data[i] / Determinant;
-                count++;
+                if(data[i*n+index]!=0)
+                {
+                    float tmp;
+                    for(int u=0; u<n; u++)
+                    {
+                        tmp = data[index*n+u];
+                        if((i - index) % 2 == 1)
+                            tmp = -tmp;
+                        data[index*n+u] = data[i*n+u];
+                        data[i*n+u] = tmp;
+                    }
+                    return true;
+                }
             }
         }
-        float det = 1, dt = 0;
-        determinant(det,n-1,dataNew, &dt);
-        delete dataNew;
-        return dt;
+        return false;
     }
-public:
-    MyMatrix()
+    float determinant(float data[], int n)
     {
-        this->n=0;
-        this->m=0;
+        for(int i=0; i<n; i++)
+        {
+            if(okRow(data,n,i))
+            {
+                for(int j=i+1; j<n; j++)
+                {
+                    float K = data[j*n+i]/data[i*n+i];
+                    for(int k = 0; k<n; k++)
+                        data[j*n+k] = data[j*n+k] - K*data[i*n+k];
+                }
+            }
+        }
+        float det = 1;
+        for(int i=0; i<n; i++)
+            det = det*data[i*n+i];
+        if(det < 0.0001 && det > -0.0001)
+            det = 0;
+        return det;
+    }
+
+public:
+    Matrix()
+    {
+        this->n = 0;
+        this->m = 0;
         this->data = NULL;
     }
-    MyMatrix(int m, int n)
+    Matrix(int m, int n)
     {
-        this->n = n;
-        this->m = m;
-        this->data = createNumbers(m,n);
-    }
-    MyMatrix(MyMatrix& t)
-    {
-        n = t.n;
-        m = t.m;
-        delete data;
-        data = new float[n*m];
-        for (int i = 0; i < m; i++)
-            for(int j = 0; j < n; j++)
-                data[i*n+j] = t.data[i*n+j];
-    }
-    virtual ~MyMatrix()
-    {
-        //cout << "I am";
-        delete data;
-    }
-    virtual AbstractMatrix& operator+(AbstractMatrix& t)
+        if( m <=0 || n<=0)
         {
-            if(this->n != t.getN() || this->m != t.getM() || failed() || t.failed())
-            {
-                static MyMatrix sum;
-                return sum;
-            }
-            static MyMatrix sum(this->m, this->n);
-            for(int i=0; i<m; i++)
-                for(int j=0; j<n; j++)
-                    sum.set(i,j,get(i,j)+t.get(i,j));
-            return sum;
+            Matrix();
+            return;
         }
-    virtual AbstractMatrix& operator = (AbstractMatrix& t)
+        this->m = m;
+        this->n = n;
+        this->data = new float [n*m];
+    }
+    Matrix(const Matrix& t) // copy constructor
     {
-        n = t.getN();
-        m = t.getM();
+        this->m = t.m;
+        this->n = t.n;
+        this->data = new float [m*n];
+        for(int i=0; i<m; i++)
+            for(int j=0; j<n; j++)
+                data[i*n + j] = t.data[i*n + j];
+    }
+    virtual ~Matrix()
+    {
         delete data;
-        data = new float[n*m];
-        for (int i = 0; i < m; i++)
-            for(int j = 0; j < n; j++)
-                data[i*n+j] = t.get(i,j);
+    }
+    virtual Matrix operator = (Matrix& t)
+    {
+        this->m = t.getM();
+        this->n = t.getN();
+        if(data != NULL)
+            delete data;
+        this->data = new float [m*n];
+        for(int i=0; i<m; i++)
+            for(int j=0; j<n; j++)
+                data[i*n+j] = t.get(i, j);
         return *this;
     }
-    virtual AbstractMatrix& operator*(AbstractMatrix& t)
+    virtual Matrix operator+(Matrix& t)
+    {
+        if(n!=t.getN() || m!=t.getM())
+        {
+            Matrix sum;
+            return sum;
+        }
+        Matrix sum(m,n);
+        for(int i=0; i<n; i++)
+            for(int j=0; j<m; j++)
+            {
+                float z = this->get(i,j) + t.get(i,j);
+                sum.set(i,j,z);
+            }
+        return sum;
+    }
+    virtual Matrix operator*(Matrix& t)
     {
         if(this->n != t.getM() || failed() || t.failed())
         {
-            static MyMatrix mult;
+            Matrix mult;
             return mult;
         }
-        static MyMatrix mult(this->m, t.getN());
+        Matrix mult(this->m, t.getN());
         for(int m = 0; m < mult.getM(); m++)
             for(int k = 0; k < mult.getN(); k++)
             {
@@ -165,110 +132,148 @@ public:
             }
         return mult;
     }
-    virtual AbstractMatrix& operator*(float& f)
+    virtual Matrix operator*(float& f)
     {
         if( failed() )
         {
-            static MyMatrix mult;
+            Matrix mult;
             return mult;
         }
-        static MyMatrix mult(m,n);
+        Matrix mult(m,n);
         for(int i=0; i<m*n; i++)
             mult.data[i] = data[i] * f;
         return mult;
     }
-    virtual AbstractMatrix& operator-(AbstractMatrix& t)
+    virtual Matrix operator-(Matrix& t)
     {
-        if(this->n != t.getN() || this->m != t.getM() || failed() || t.failed())
+        if(n!=t.getN() || m!=t.getM())
         {
-            static MyMatrix sum;
+            Matrix sum;
             return sum;
         }
-        static MyMatrix sum(this->m, this->n);
-        for(int i=0; i<m; i++)
-            for(int j=0; j<n; j++)
-                sum.set(i,j,get(i,j)-t.get(i,j));
+        Matrix sum(m,n);
+        for(int i=0; i<n; i++)
+            for(int j=0; j<m; j++)
+            {
+                float z = this->get(i,j) - t.get(i,j);
+                sum.set(i,j,z);
+            }
         return sum;
     }
-    virtual AbstractMatrix& reverse()
+    Matrix minor(int I, int J)
     {
-        float Determinant = determinant();
-        if( this->n != this->m || failed() || Determinant == 0)
+        Matrix Minor((n-1),(n-1));
+        int count  = 0;
+        for(int i=0; i<n*n; i++)
         {
-            return *this;
+            if(i/n == I || i%n == J)
+            {}
+            else
+            {
+                Minor.data[count] = data[i];
+                count ++;
+            }
         }
-        float* dataNew = new float [m*n];
-        for(int i=0; i<m; i++)
-            for(int j=0; j<n; j++)
-                dataNew[i*m+j] = minors(i, j, Determinant);
-        delete data;
-        data = dataNew;
-        return *this;
+        return Minor;
     }
-    virtual AbstractMatrix& transpose()
+
+    virtual Matrix reverse()
     {
-        float* nData = new float [n*m];
+        if(n!=m || failed())
+            return *this;
+        float det = determinant();
+        if (det == 0)
+            return *this;
+        Matrix reverse(n,n);
+        for(int i=0; i<n; i++)
+            for(int j = 0; j<n; j++)
+            {
+                Matrix Minor = minor(i, j);
+                float d = Minor.determinant()/det;
+                reverse.set(i,j,d);
+                det = -det;
+            }
+        return reverse;
+    }
+    virtual Matrix transpose()
+    {
+        if( failed() )
+        {
+            Matrix trans;
+            return trans;
+        }
+        Matrix trans(n, m);
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                nData[i*n+j] = get(j,i);
-        delete data;
-        data = nData;
-        return *this;
+                trans.set(j,i,get(i,j));
+        return trans;
     }
     virtual float determinant()
     {
-        if( this->n != this->m || failed())
+        if(n!=m || failed())
             return 0;
-        float D = 0;
-        determinant(1, n, data, &D);
-        return D;
+        float Data[n*n];
+        for(int i=0; i<n*n; i++)
+            Data[i] = data[i];
+        float det = determinant(Data, n);
+        return det;
     }
     virtual ostream& print(ostream& o)
     {
-        for(int i=0; i<m*n; i++)
+        for(int i=0; i<m; i++)
         {
-            if(i%n == 0)
-                o << endl;
-            o << data[i] << '\t';
+            for(int j=0; j<n; j++)
+            {
+                o << this->get(i,j) << '\t';
+            }
+            o << endl;
         }
-        o << endl;
         return o;
     }
     virtual istream& read(istream& o)
     {
         o >> this->m >> this->n;
-        delete data;
+        if(data!=NULL)
+            delete data;
         data = new float [m*n];
         for(int i=0; i<m*n; i++)
             o >> data[i];
         return o;
     }
-    virtual float get (int i, int j)
-    {
-        int pos = getRightPos(i, j, getN());
-        return this->data[pos];
-    }
     virtual void set(int i, int j, float data)
     {
-        int pos = getRightPos(i, j, getN());
-        this->data[pos] = data;
+        this->data[i*n+j] = data;
+        return;
     }
-    virtual int getN ()
+    virtual float get(int i, int j)
     {
-        return this->n;
+        return data[i*n+j];
     }
-    virtual int getM ()
-    {
-        return this->m;
-    }
-    virtual bool failed () //it will return true if matrix is fail
-    {
-        return (this->data == NULL);
-    }
+    virtual int getN(){return n;}
+    virtual int getM(){return m;}
+    virtual bool failed() {return (n<=0 || m<=0 || data == NULL);}
 };
 
-AbstractMatrix* get_init()
+Matrix* get_init(int n, int m)
 {
-    MyMatrix* n = new MyMatrix(3,3);
-    return n;
+    Matrix* N = new Matrix(m,n);
+    return N;
 }
+
+/*
+int main()
+{
+    int n = 3;
+    Matrix t(n,n);
+    for(int i=0; i<n; i++)
+        for(int j=0; j<n; j++)
+            t.set(i,j,1);
+    for(int i=0; i<n; i++)
+        t.set(i,i,2);
+    t.print(cout);
+    cout << t.determinant() << endl;
+    Matrix f = t.reverse();
+    f.print(cout);
+    return 0;
+}
+*/
