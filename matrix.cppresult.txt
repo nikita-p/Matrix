@@ -4,10 +4,46 @@
 [ RUN      ] MatrixTest.GetNM
 [       OK ] MatrixTest.GetNM
 [ RUN      ] MatrixTest.Reverse
-1	-0	0	-0	0	
--0	1	-0	0	-0	
-0	-0	1	-0	0	
--0	0	-0	1	-0	
-0	-0	0	-0	1	
-FAIL
-Segmentation fault. Program terminated!
+[       OK ] MatrixTest.Reverse
+[ RUN      ] MatrixTest.Transpose
+cur.cpp:80: Failure
+Value of: abs((int)(i+j - c.get(i,j))) < 0.001
+  Actual: false
+Expected: true
+cur.cpp:80: Failure
+Value of: abs((int)(i+j - c.get(i,j))) < 0.001
+  Actual: false
+Expected: true
+cur.cpp:80: Failure
+Value of: abs((int)(i+j - c.get(i,j))) < 0.001
+  Actual: false
+Expected: true
+cur.cpp:80: Failure
+Value of: abs((int)(i+j - c.get(i,j))) < 0.001
+  Actual: false
+Expected: true
+cur.cpp:80: Failure
+Value of: abs((int)(i+j - c.get(i,j))) < 0.001
+  Actual: false
+Expected: true
+[  FAILED  ] MatrixTest.Transpose
+[ RUN      ] MatrixTest.SetGet
+cur.cpp:92: Failure
+Value of: abs((int)(i+j - m->get(j,i))) < 0.001
+  Actual: false
+Expected: true
+cur.cpp:92: Failure
+Value of: abs((int)(i+j - m->get(j,i))) < 0.001
+  Actual: false
+Expected: true
+[  FAILED  ] MatrixTest.SetGet
+[ RUN      ] MatrixTest.FailedM
+cur.cpp:99: Failure
+Value of: m->failed()
+  Actual: false
+Expected: true
+[  FAILED  ] MatrixTest.FailedM
+[ RUN      ] MatrixTest.Read
+[       OK ] MatrixTest.Read
+[ RUN      ] MatrixTest.Determinant
+killall: not found
