@@ -95,7 +95,7 @@ public:
         this->data = new float [m*n];
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                data[i*n+j] = t.get(i, j);
+                data[i*n+j] = t.my_get(i, j);
         return *this;
     }
     virtual Matrix operator+(Matrix& t)
@@ -109,7 +109,7 @@ public:
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
             {
-                float z = this->get(i,j) + t.get(i,j);
+                float z = this->my_get(i,j) + t.my_get(i,j);
                 sum.set(i,j,z);
             }
         return sum;
@@ -127,7 +127,7 @@ public:
             {
                 float sumMult = 0;
                 for(int j=0; j<n; j++)
-                    sumMult += (get(m,j) * t.get(j,k));
+                    sumMult += (my_get(m,j) * t.my_get(j,k));
                 mult.set(m,k,sumMult);
             }
         return mult;
@@ -155,7 +155,7 @@ public:
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
             {
-                float z = this->get(i,j) - t.get(i,j);
+                float z = this->my_get(i,j) - t.my_get(i,j);
                 sum.set(i,j,z);
             }
         return sum;
@@ -205,7 +205,7 @@ public:
         Matrix trans(n, m);
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                trans.set(j,i,get(i,j));
+                trans.set(j,i,my_get(i,j));
         return trans;
     }
     virtual float determinant()
@@ -224,7 +224,7 @@ public:
         {
             for(int j=0; j<n; j++)
             {
-                o << this->get(i,j) << '\t';
+                o << this->my_get(i,j) << '\t';
             }
             o << endl;
         }
@@ -245,13 +245,17 @@ public:
         this->data[i*n+j] = data;
         return;
     }
-    virtual float get(int i, int j)
+    virtual float my_get(int i, int j)
     {
         return data[i*n+j];
     }
+    virtual float get(int i, int j)
+    {
+        return data[(i-1)*n+(j-1)];
+    }
     virtual int getN(){return n;}
     virtual int getM(){return m;}
-    virtual bool failed() {return (n<=0 || m<=0 || data == NULL);}
+    virtual bool failed() {return (n<=0 || m<=0 || n!=m || data == NULL);}
 };
 
 Matrix* get_init(int n, int m)
@@ -260,7 +264,14 @@ Matrix* get_init(int n, int m)
     return N;
 }
 
-/*
+ /*
+
+void foo(Matrix& t)
+{
+    for(;;)
+    t.reverse();
+}
+
 int main()
 {
     int n = 3;
@@ -272,8 +283,7 @@ int main()
         t.set(i,i,2);
     t.print(cout);
     cout << t.determinant() << endl;
-    Matrix f = t.reverse();
-    f.print(cout);
+    foo(t);
     return 0;
-}
-*/
+}*/
+
