@@ -13,8 +13,5 @@ nikita/matrix.cpp: In member function 'virtual Matrix Matrix::reverse()':
 nikita/matrix.cpp:191:32: error: 'minor' was not declared in this scope
                  Matrix Minor = minor(i, j);
                                 ^
-cur.cpp: In member function 'virtual void MatrixTest_Transpose_Test::TestBody()':
-cur.cpp:72:22: error: 'j' was not declared in this scope
-     for (int i = 0 ; j < 4; i ++)
-                      ^
+./check.sh: line 24: ./a.out: No such file or directory
 ./check.sh: line 24: ./a.out: No such file or directory
