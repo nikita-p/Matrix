@@ -5,3 +5,12 @@ nikita/matrix.cpp:163:30: error: macro "minor" passed 2 arguments, but takes jus
 nikita/matrix.cpp:191:42: error: macro "minor" passed 2 arguments, but takes just 1
                  Matrix Minor = minor(i, j);
                                           ^
+nikita/matrix.cpp:178:5: error: field 'minor' has incomplete type
+     }
+     ^
+nikita/matrix.cpp:178:5: error: expected ';' at end of member declaration
+nikita/matrix.cpp: In member function 'virtual Matrix Matrix::reverse()':
+nikita/matrix.cpp:191:32: error: 'minor' was not declared in this scope
+                 Matrix Minor = minor(i, j);
+                                ^
+./check.sh: line 24: ./a.out: No such file or directory
