@@ -264,26 +264,3 @@ Matrix* get_init(int n, int m)
     return N;
 }
 
- /*
-
-void foo(Matrix& t)
-{
-    for(;;)
-    t.reverse();
-}
-
-int main()
-{
-    int n = 3;
-    Matrix t(n,n);
-    for(int i=0; i<n; i++)
-        for(int j=0; j<n; j++)
-            t.set(i,j,1);
-    for(int i=0; i<n; i++)
-        t.set(i,i,2);
-    t.print(cout);
-    cout << t.determinant() << endl;
-    foo(t);
-    return 0;
-}*/
-
