@@ -1,0 +1,7 @@
+In file included from cur.cpp:15:0:
+nikita/matrix.cpp:163:30: error: macro "minor" passed 2 arguments, but takes just 1
+     Matrix minor(int I, int J)
+                              ^
+nikita/matrix.cpp:191:42: error: macro "minor" passed 2 arguments, but takes just 1
+                 Matrix Minor = minor(i, j);
+                                          ^
