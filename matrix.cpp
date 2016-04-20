@@ -184,7 +184,7 @@ public:
 
     virtual Matrix reverse()
     {
-        if(n!=m || failed())
+    	if(n!=m || failed())
             return *this;
         float det = determinant();
         if (det == 0)
@@ -195,8 +195,11 @@ public:
             {
                 Matrix _Minor = _minor(i, j);
                 float d = _Minor.determinant()/det;
-                reverse.set(i,j,d);
-                det = -det;
+                if((i+j)%2 == 1)
+                    d = -d;
+                if(d < 0.0001 && d > -0.0001)
+                    d = 0;
+                reverse.set(j,i,d);
             }
         return reverse;
     }
