@@ -64,13 +64,18 @@ public:
     }
     Matrix(int m, int n)
     {
+      
         if( m <=0 || n<=0)
         {
-            Matrix();
+        this->n = 0;
+        this->m = 0;
+        this->data = NULL;
+	  
+	//	  Matrix(); // RV: what this line is for? you can't call other constructor this way, it will create new anonymous object
             return;
         }
         this->m = m;
-        this->n = n;
+        this->n = n;  
         this->data = new float [n*m];
     }
     Matrix(const Matrix& t) // copy constructor
@@ -80,22 +85,22 @@ public:
         this->data = new float [m*n];
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                data[i*n + j] = t.data[i*n + j];
+	      data[i*n + j] = t.data[i*n + j]; // RV: why don't you use set/get here?
     }
     virtual ~Matrix()
     {
         delete data;
     }
-    virtual Matrix operator = (Matrix& t)
+    virtual Matrix& operator = (const Matrix& t)
     {
-        this->m = t.getM();
-        this->n = t.getN();
+      this->m = t.m;
+        this->n = t.n;
         if(data != NULL)
             delete data;
         this->data = new float [m*n];
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                data[i*n+j] = t.my_get(i, j);
+	      data[i*n+j] = t.get(i, j); //RV: why don't you used set?
         return *this;
     }
     virtual Matrix operator+(Matrix& t)
@@ -109,7 +114,7 @@ public:
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
             {
-                float z = this->my_get(i,j) + t.my_get(i,j);
+                float z = this->get(i,j) + t.get(i,j);
                 sum.set(i,j,z);
             }
         return sum;
@@ -127,7 +132,7 @@ public:
             {
                 float sumMult = 0;
                 for(int j=0; j<n; j++)
-                    sumMult += (my_get(m,j) * t.my_get(j,k));
+                    sumMult += (get(m,j) * t.get(j,k));
                 mult.set(m,k,sumMult);
             }
         return mult;
@@ -155,14 +160,14 @@ public:
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
             {
-                float z = this->my_get(i,j) - t.my_get(i,j);
+                float z = this->get(i,j) - t.get(i,j);
                 sum.set(i,j,z);
             }
         return sum;
     }
-    Matrix minor(int I, int J)
+  Matrix _minor(int I, int J) //RV: minor is reserved on some systems as a version macro
     {
-        Matrix Minor((n-1),(n-1));
+        Matrix _Minor((n-1),(n-1));
         int count  = 0;
         for(int i=0; i<n*n; i++)
         {
@@ -170,11 +175,11 @@ public:
             {}
             else
             {
-                Minor.data[count] = data[i];
+                _Minor.data[count] = data[i];
                 count ++;
             }
         }
-        return Minor;
+        return _Minor;
     }
 
     virtual Matrix reverse()
@@ -188,8 +193,8 @@ public:
         for(int i=0; i<n; i++)
             for(int j = 0; j<n; j++)
             {
-                Matrix Minor = minor(i, j);
-                float d = Minor.determinant()/det;
+                Matrix _Minor = _minor(i, j);
+                float d = _Minor.determinant()/det;
                 reverse.set(i,j,d);
                 det = -det;
             }
@@ -205,7 +210,7 @@ public:
         Matrix trans(n, m);
         for(int i=0; i<m; i++)
             for(int j=0; j<n; j++)
-                trans.set(j,i,my_get(i,j));
+	      trans.set(j,i,get(i,j));
         return trans;
     }
     virtual float determinant()
@@ -220,11 +225,11 @@ public:
     }
     virtual ostream& print(ostream& o)
     {
-        for(int i=0; i<m; i++)
+        for(int j=0; j<n; j++)
         {
-            for(int j=0; j<n; j++)
+            for(int i=0; i<m; i++)
             {
-                o << this->my_get(i,j) << '\t';
+                o << this->get(i,j) << '\t';
             }
             o << endl;
         }
@@ -242,25 +247,21 @@ public:
     }
     virtual void set(int i, int j, float data)
     {
-        this->data[i*n+j] = data;
+        this->data[i+j*m] = data; //RV: i,j indexes were inconsistent with constructor
         return;
     }
-    virtual float my_get(int i, int j)
+    virtual float get(int i, int j) const
     {
-        return data[i*n+j];
-    }
-    virtual float get(int i, int j)
-    {
-        return data[(i-1)*n+(j-1)];
+      return data[i+j*m]; //RV: i,j indexes were inconsistent with constructor
     }
     virtual int getN(){return n;}
     virtual int getM(){return m;}
-    virtual bool failed() {return (n<=0 || m<=0 || n!=m || data == NULL);}
+  virtual bool failed() {return (n<=0 || m<=0 || data == NULL);} // RV: n!= m is a correct matrix!
 };
 
-Matrix* get_init(int n, int m)
+Matrix* get_init(int m, int n)
 {
-    Matrix* N = new Matrix(m,n);
+    Matrix* N = new Matrix(m,n); //RV: m and n were flipped over
     return N;
 }
 
