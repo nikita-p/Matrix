@@ -8,17 +8,17 @@
 0	1	2	3	
 0	0	1	2	
 0	0	0	1	
-1	-0	0	-0	
-2	-1	0	-0	
-1	-2	1	-0	
-0	-1	2	-1	
+1	-2	1	0	
+0	1	-2	1	
+0	0	1	-2	
+0	0	0	1	
 cur.cpp:50: Failure
 Value of: round(c.get(i,i)+0.5)
   Actual: 2
 Expected: 1
 cur.cpp:50: Failure
 Value of: round(c.get(i,i)+0.5)
-  Actual: -1
+  Actual: 2
 Expected: 1
 cur.cpp:50: Failure
 Value of: round(c.get(i,i)+0.5)
@@ -26,27 +26,7 @@ Value of: round(c.get(i,i)+0.5)
 Expected: 1
 cur.cpp:50: Failure
 Value of: round(c.get(i,i)+0.5)
-  Actual: -1
-Expected: 1
-cur.cpp:53: Failure
-Value of: round(c.get(i+1,i))
-  Actual: -0
-Expected: -2
-cur.cpp:53: Failure
-Value of: round(c.get(i+1,i))
-  Actual: 0
-Expected: -2
-cur.cpp:53: Failure
-Value of: round(c.get(i+1,i))
-  Actual: -0
-Expected: -2
-cur.cpp:55: Failure
-Value of: round(c.get(i+2,i))
-  Actual: 0
-Expected: 1
-cur.cpp:55: Failure
-Value of: round(c.get(i+2,i))
-  Actual: -0
+  Actual: 2
 Expected: 1
 [  FAILED  ] MatrixTest.Reverse
 [ RUN      ] MatrixTest.Transpose
