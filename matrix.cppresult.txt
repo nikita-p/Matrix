@@ -12,23 +12,11 @@
 0	1	-2	1	
 0	0	1	-2	
 0	0	0	1	
-cur.cpp:50: Failure
-Value of: round(c.get(i,i)+0.5)
-  Actual: 2
-Expected: 1
-cur.cpp:50: Failure
-Value of: round(c.get(i,i)+0.5)
-  Actual: 2
-Expected: 1
-cur.cpp:50: Failure
-Value of: round(c.get(i,i)+0.5)
-  Actual: 2
-Expected: 1
-cur.cpp:50: Failure
-Value of: round(c.get(i,i)+0.5)
-  Actual: 2
-Expected: 1
-[  FAILED  ] MatrixTest.Reverse
+index: 0
+index: 1
+index: 2
+index: 3
+[       OK ] MatrixTest.Reverse
 [ RUN      ] MatrixTest.Transpose
 [       OK ] MatrixTest.Transpose
 [ RUN      ] MatrixTest.SetGet
@@ -41,8 +29,4 @@ Expected: 1
 [       OK ] MatrixTest.Determinant
 [----------] Global test environment tear-down
 [==========] 7 tests from 1 test case ran.
-[  PASSED  ] 6 tests.
-[  FAILED  ] 1 test, listed below:
-[  FAILED  ] MatrixTest.Reverse
-
- 1 FAILED TEST
+[  PASSED  ] 7 tests.
